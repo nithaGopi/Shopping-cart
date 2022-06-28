@@ -5,10 +5,13 @@ var productHelper = require('../helpers/product-helpers')
 /* GET product  listing. */
 router.get('/', function(req, res, next) {
     //res.send('In admin section');
+
     productHelper.getAllProducts().then((products) => {
+        // console.log(products);
         res.render('admin/view-products', { products, admin: true })
 
     })
+
 
 
 });
@@ -29,5 +32,15 @@ router.post('/add-products', function(req, res, next) {
 
     });
 });
+router.get("/delete-product/", function(req, res, next) {
+
+    let id = req.query.id; //req.params.id ...if url like delete-product/7676f8jdhfjhf
+
+    productHelper.deleteProduct(id).then((response) => {
+
+        res.redirect("/admin");
+    });
+
+})
 
 module.exports = router;
