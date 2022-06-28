@@ -42,7 +42,7 @@ module.exports = {
                 bcrypt.compare(userData.userPassword, userRecord.userPassword).then((status) => {
 
                     if (status) { //login success
-                        console.log("inside user helper ...valid login");
+                        // console.log("inside user helper ...valid login");
                         response['user'] = userRecord;
                         response['loginStatus'] = true;
                         resolve({ response });
