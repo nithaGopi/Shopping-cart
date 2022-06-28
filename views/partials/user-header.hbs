@@ -10,17 +10,35 @@
                     <a class="nav-link" href="/">Products <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Cart</a>
+                    <a class="nav-link" href="/cart">Cart</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Orders</a>
-                </li>
-                
+                {{#if user }}
+                <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
+                {{/if}}
             </ul>
-            <form class="form-inline my-2 my-lg-0">
+            <!-- <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
+</form> -->
+            <!-- new dropdown section here for signup action -->
+            <div class="dropdown show">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{#if user }}
+                    {{user.userName}}
+                    {{else}}
+                    Account
+                    {{/if}}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    {{#if user }}
+                    <a class="dropdown-item" href="/logout">Logout</a>
+                    {{else}}
+                    <a class="dropdown-item" href="/login">Login</a>
+                    {{/if}}
+                    <a class="dropdown-item" href="#">Another action</a>
+                </div>
+            </div>
+            <!-- drop down section ends here -->
         </div>
     </nav>
 </header>
