@@ -76,12 +76,24 @@ router.get('/signup', function(req, res, next) {
 });
 router.post('/signup', function(req, res, next) {
     userHelper.doSignup(req.body).then((response) => {
+        // req.session.loggedIn = true;
+        // req.session.user = response;
         console.log(response);
     })
 
 })
-router.get("/cart", verifyLogin, function(req, res, next) {
+router.get("/cart", verifyLogin,async(req, res)=> {
+
+    let userCartProducts = await userHelper.getCartProducts(req.session.user._id)
+    console.log(userCartProducts)
+
     res.render("user/cart")
 })
+router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
+    userHelper.addToCart(req.params.id,req.session.user._id).then(()=>{
 
+        res.redirect("/")
+    })
+
+})
 module.exports = router; //....
