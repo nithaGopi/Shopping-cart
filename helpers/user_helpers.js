@@ -71,72 +71,83 @@ module.exports = {
 
     },
     //LOGIN...............................................................   
-    addToCart:(productId,userId) =>{
+    addToCart: (productId, userId) => {
 
-        return new Promise(async(resolve,reject)=>{
-             let userCart  =await db.get().collection(collection.CART_COLLECTION).findOne({user: objectId(userId) })
-             if(userCart) {
-                db.get().collection(collection.CART_COLLECTION).updateOne({user: objectId(userId) },
-                {
-                    
-                        $push:{products:objectId(productId)}
-                    
-                    
-                }
-                ).then((response)=>{
+        return new Promise(async (resolve, reject) => {
+            let userCart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
+            if (userCart) {
+                db.get().collection(collection.CART_COLLECTION).updateOne({ user: objectId(userId) }, {
+
+                    $push: { products: objectId(productId) }
+
+
+                }).then((response) => {
                     resolve()
                 })
 
-             }else{//update the product in cart  else create new cart
+            } else { //update the product in cart  else create new cart
                 let catObj = { //create an object , with userId and product id's as an array to store in cart collection
-                     user:objectId(userId),
-                     products:[objectId(productId)]
+                    user: objectId(userId),
+                    products: [objectId(productId)]
                 }
 
-                let userCart =await db.get().collection(collection.CART_COLLECTION).insertOne(catObj).then((response)=>{
+                let userCart = await db.get().collection(collection.CART_COLLECTION).insertOne(catObj).then((response) => {
                     resolve()
                 })
 
-             } 
+            }
 
 
         })
     },
-    getCartProducts:(userId)=>{
+    getCartProducts: (userId) => {
 
-         return new Promise(async(resolve,reject)=>{
+        return new Promise(async (resolve, reject) => {
 
-            let cartItems  = await db.get().collection(collection.CART_COLLECTION).aggregate([
-                {
-                    $match:{user:objectId(userId)},
+            let cartItems = await db.get().collection(collection.CART_COLLECTION).aggregate([{
+                    $match: { user: objectId(userId) },
 
 
                 },
                 {
-                    $lookup:{
-                        from:'products',
-                        let:{proList:'$products'}, //$products = product id array from product collection
-                        pipline:[ //pipline is for condition to match products collection and cart collection
-                         {
+                    $lookup: {
+                        from: collection.PRODUCT_COLLECTION,
+                        let: { proList: '$products' }, //$products = product id array from product collection
+                        pipeline: [ //pipeline is for condition to match products collection and cart collection
+                            {
 
-                            $match:{
-                                $expr:{
-                                    $in:['$_id','$$proList']
+                                $match: {
+                                    $expr: {
+                                        $in: ['$_id', "$$proList"]
+                                    }
                                 }
+
                             }
 
-                         }
 
 
                         ], //pipeline ends here
-                        as:'cartItemsOfUser'
+                        as: 'cartItems'
 
                     }
                 }
             ]).toArray()
-            resolve(cartItemsOfUser)
+            resolve(cartItems[0].cartItems)
 
-         })
+        })
+    },
+    getCartCount: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let cartItems = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
+            let count = 0;
+            if (cart) {
+                count = cartItems.product.length
+            }
+            resolve(count)
+        })
+
+
+
     }
 
 
